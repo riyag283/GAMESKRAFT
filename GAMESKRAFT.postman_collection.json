@@ -1,0 +1,353 @@
+{
+	"info": {
+		"_postman_id": "a7b054ba-6ac2-4daa-a1b3-aa622813ce56",
+		"name": "GAMESKRAFT",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20117330"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "mutation {\n  createUser (\n        id: 7\n        username: \"icecream\"\n        password: \"abc123\"\n        lat: 22.363848\n        lng: 82.73484\n        maxDist: 5\n        gameInterest: [\n            {\n                game: 1\n                skillScore: 4.9\n                interestLevel: 3.7\n            },\n            {\n                game: 2\n                skillScore: 2.7\n                interestLevel: 5.6\n            },\n            {\n                game: 3\n                skillScore: 10\n                interestLevel: 7\n            },\n            {\n                game: 4\n                skillScore: 6.8\n                interestLevel: 5.9\n            },\n            {\n                game: 5\n                skillScore: 2.1\n                interestLevel: 6.1\n            },\n            {\n                game: 7\n                skillScore: 9.5\n                interestLevel: 6.4\n            },\n            {\n                game: 9\n                skillScore: 1.2\n                interestLevel: 9.8\n            },\n            {\n                game: 10\n                skillScore: 5.7\n                interestLevel: 4.3\n            },\n        ]\n    ){\n        id\n        username\n        password\n        blockedIds\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{host}}",
+					"host": [
+						"{{host}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Block User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "mutation {\n  blockUser (\n        id: \"661040e2f000e53141e0f6c6\"\n        blockId: \"66105b1bda9d81a010a85d95\"\n    ){\n        id\n        name\n        email\n        password\n        blockedIds\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{host}}",
+					"host": [
+						"{{host}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Connect User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "mutation {\n  connectUser (\n        id: \"1\"\n        connectId: \"4\"\n    ){\n        id\n        username\n        password\n        blockedIds\n        connectionIds\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{host}}",
+					"host": [
+						"{{host}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Blocked Users",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\n  getBlockedUsers (\n        id: \"661040e2f000e53141e0f6c6\"\n    ){\n        id\n        name\n        email\n        password\n        blockedIds\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{host}}",
+					"host": [
+						"{{host}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unblock User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "mutation {\n  unblockUser (\n        id: \"66104c319733081463e2742c\"\n        blockId: \"661040e2f000e53141e0f6c6\"\n    ){\n        id\n        name\n        email\n        password\n        blockedIds\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{host}}",
+					"host": [
+						"{{host}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Users",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\n  getAllUsers {\n        id\n        username\n        password\n        blockedIds\n        location {\n            coordinates\n        }\n        gameInterest {\n            game\n            skillScore\n            interestLevel\n        }\n        maxDist\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{host}}",
+					"host": [
+						"{{host}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Near By Users",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\n  getNearbyUsers(\n    id: \"66104c319733081463e2742c\"\n  ) {\n        id\n        name\n        email\n        password\n        blockedIds\n        location {\n            coordinates\n        }\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{host}}",
+					"host": [
+						"{{host}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User by ID",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "authzz",
+						"value": "121562",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\n  getUser(id: \"1\") {\n    id\n    username\n    password\n    blockedIds\n    location {\n      coordinates\n    }\n    gameInterest {\n      game\n      skillScore\n      interestLevel\n    }\n  }\n}\n",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{host}}",
+					"host": [
+						"{{host}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\n  getUser(id: \"1\") {\n    id\n    username\n    password\n    blockedIds\n    location {\n      coordinates\n    }\n    gameInterest {\n      game\n      skillScore\n      interestLevel\n    }\n  }\n}\n",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{host}}",
+					"host": [
+						"{{host}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Users for ID",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\n  getUsers (\n    id: \"1\"\n  ) {\n        id\n        username\n        password\n        blockedIds\n        location {\n            coordinates\n        }\n        gameInterest {\n            game\n            skillScore\n            interestLevel\n        }\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{host}}",
+					"host": [
+						"{{host}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Users Dashboard for ID",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\n  getUsersList (\n    id: \"1\"\n  ) {\n        id\n        username\n        password\n        blockedIds\n        location {\n            coordinates\n        }\n        gameInterest {\n            game\n            skillScore\n            interestLevel\n        }\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{host}}",
+					"host": [
+						"{{host}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User by ID",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "mutation {\n  deleteUser (\n    id: \"661043c02552f1f2e746423b\"\n  ) {\n        id\n        name\n        email\n        password\n        blockedUsers\n        location {\n            coordinates\n        }\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{host}}",
+					"host": [
+						"{{host}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Game",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "mutation {\n  createGame (\n      id: 9\n      name: \"Poker\"\n    ){\n        id\n        name\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{host}}",
+					"host": [
+						"{{host}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
