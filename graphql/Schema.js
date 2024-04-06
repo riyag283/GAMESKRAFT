@@ -21,7 +21,9 @@ const schema = buildSchema(`
     username: String!
     password: String!
     blockedIds: [ID!]
+    connectionIds: [ID!]
     location: Location
+    maxDist: Int
     gameInterest: [GameInfo!]
   }
 
@@ -40,13 +42,20 @@ const schema = buildSchema(`
     interestLevel: Float!
   }
   
+  type AuthPayload {
+    token: String!
+    user: User
+  }
+  
   type Mutation {
     createGame(id: ID!, name: String!): Game!
-    createUser(id: ID!, username: String!, password: String!, lat: Float!, lng: Float!, gameInterest: [GameInfoInput!]): User
+    createUser(id: ID!, username: String!, password: String!, lat: Float!, lng: Float!, maxDist: Int, gameInterest: [GameInfoInput!]): User
     updateUser(id: ID!, name: String, email: String, password: String, lat: Float, lng: Float): User
     deleteUser(id: ID!): User
+    connectUser(id: ID!, connectId: ID!): User
     blockUser(id: ID!, blockId: ID!): User
     unblockUser(id: ID!, blockId: ID!): User
+    login(username: String!, password: String!): AuthPayload
   }
 `);
 

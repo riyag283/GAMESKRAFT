@@ -31,6 +31,9 @@ const userSchema = new mongoose.Schema({
   blockedIds: {
     type: [String],
   },
+  connectionIds: {
+    type: [String],
+  },
   location: {
     type: {
       type: String,
@@ -41,6 +44,10 @@ const userSchema = new mongoose.Schema({
       type: [Number],
       required: true,
     },
+  },
+  maxDist: {
+    type: Number,
+    required: false
   },
   gameInterest: {
     type: [gameInfoSchema], // This tells Mongoose that gameInterest is an array of GameInfo objects

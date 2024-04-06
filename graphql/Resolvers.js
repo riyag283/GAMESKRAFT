@@ -1,8 +1,18 @@
 const User = require("../models/User");
 const Game = require("../models/Game");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const saltRounds = 10;
 const calculateMatchMeasure = require("../utility/matchScore");
+
+function validateToken(token) {
+  try {
+    const decoded = jwt.verify(token, "your-secret-key");
+    return decoded;
+  } catch (err) {
+    throw new Error("Invalid token");
+  }
+}
 
 const resolvers = {
   createGame: async ({ id, name }) => {
@@ -58,7 +68,15 @@ const resolvers = {
     }
   },
 
-  createUser: async ({ id, username, password, lat, lng, gameInterest }) => {
+  createUser: async ({
+    id,
+    username,
+    password,
+    lat,
+    lng,
+    maxDist,
+    gameInterest,
+  }) => {
     try {
       // Hash the password
       const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -68,10 +86,12 @@ const resolvers = {
         username,
         password: hashedPassword,
         blockedIds: [],
+        connectionIds: [],
         location: {
           type: "Point",
           coordinates: [lat, lng],
         },
+        maxDist,
         gameInterest,
       });
       await user.save();
@@ -138,6 +158,33 @@ const resolvers = {
       return updatedUser;
     } catch (err) {
       throw new Error("Error blocking user: " + err);
+    }
+  },
+
+  connectUser: async (args) => {
+    try {
+      if (args.id === args.connectId) {
+        throw new Error("User cannot connect themselves");
+      }
+      const userToConnect = await User.findById(args.connectId);
+      if (!userToConnect) {
+        throw new Error("User to connect not found");
+      }
+      const user = await User.findById(args.id);
+      if (!user) {
+        throw new Error("User not found");
+      }
+      if (user.connectionIds?.includes(args.connectId)) {
+        throw new Error("User is already connected");
+      }
+      const updatedUser = await User.findByIdAndUpdate(
+        args.id,
+        { $push: { connectionIds: args.connectId } },
+        { new: true }
+      );
+      return updatedUser;
+    } catch (err) {
+      throw new Error("Error connecting user: " + err);
     }
   },
 
@@ -217,13 +264,14 @@ const resolvers = {
       let users = await User.find({
         _id: { $nin: blockedIds }, // $nin selects the documents where the value of the field is not in the specified array
         blockedIds: { $ne: id }, // Exclude users who have the user in their blockedIds
+        connectionIds: { $ne: id },
         location: {
           $near: {
             $geometry: {
               type: "Point",
               coordinates: user.location.coordinates,
             },
-            $maxDistance: 500000, // 500 kilometers
+            $maxDistance: user.maxDist * 1000 ? user.maxDist : 10000000000,
           },
         },
       });
@@ -243,6 +291,29 @@ const resolvers = {
     } catch (err) {
       throw new Error(`Error retrieving users: ${err.message}`);
     }
+  },
+
+  login: async ({ username, password }) => {
+    // Find the user by username
+    const user = await User.findOne({ username });
+    if (!user) {
+      throw new Error("Invalid username or password");
+    }
+
+    // Check the password
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      throw new Error("Invalid username or password");
+    }
+
+    // Generate a token
+    const token = jwt.sign({ id: user.id }, "your-secret-key");
+
+    // Return the token and user data
+    return {
+      token,
+      user,
+    };
   },
 };
 
