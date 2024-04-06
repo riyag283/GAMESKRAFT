@@ -1,9 +1,27 @@
 const User = require("../models/User");
+const Game = require("../models/Game");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
+const calculateMatchMeasure = require("../utility/matchScore");
 
 const resolvers = {
+  createGame: async ({ id, name }) => {
+    try {
+      const game = new Game({
+        _id: id,
+        name,
+      });
+      await game.save();
+      return game;
+    } catch (err) {
+      throw new Error("Error creating game: " + err);
+    }
+  },
+
   getUser: async ({ id }) => {
     try {
       const user = await User.findById(id);
+      console.log(user);
       return user;
     } catch (err) {
       throw new Error("Error retrieving user");
@@ -40,22 +58,26 @@ const resolvers = {
     }
   },
 
-  createUser: async ({ name, email, password, lat, lng }) => {
+  createUser: async ({ id, username, password, lat, lng, gameInterest }) => {
     try {
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+
       const user = new User({
-        name,
-        email,
-        password,
+        _id: id,
+        username,
+        password: hashedPassword,
         blockedIds: [],
         location: {
           type: "Point",
           coordinates: [lat, lng],
         },
+        gameInterest,
       });
       await user.save();
       return user;
     } catch (err) {
-      throw new Error("Error creating user" + err);
+      throw new Error("Error creating user: " + err);
     }
   },
 
@@ -180,6 +202,47 @@ const resolvers = {
       },
     });
     return nearbyUsers;
+  },
+
+  getUsersList: async ({ id }) => {
+    try {
+      const user = await User.findById(id);
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      const blockedIds = user.blockedIds || [];
+      blockedIds.push(id); // Add the user's own id to the blockedIds
+
+      let users = await User.find({
+        _id: { $nin: blockedIds }, // $nin selects the documents where the value of the field is not in the specified array
+        blockedIds: { $ne: id }, // Exclude users who have the user in their blockedIds
+        location: {
+          $near: {
+            $geometry: {
+              type: "Point",
+              coordinates: user.location.coordinates,
+            },
+            $maxDistance: 500000, // 500 kilometers
+          },
+        },
+      });
+
+      // Calculate match measure for each user and store it along with the user data
+      users = users.map((otherUser) => {
+        const matchMeasure = calculateMatchMeasure(user, otherUser);
+        return { matchMeasure, userData: otherUser };
+      });
+
+      // Sort users in descending order of match measure
+      users.sort((a, b) => b.matchMeasure - a.matchMeasure);
+      console.log(users);
+
+      // Return sorted user data
+      return users.map((user) => user.userData);
+    } catch (err) {
+      throw new Error(`Error retrieving users: ${err.message}`);
+    }
   },
 };
 

@@ -1,14 +1,28 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
+const gameInfoSchema = new mongoose.Schema(
+  {
+    game: {
+      type: String,
+      required: true,
+    },
+    skillScore: {
+      type: Number,
+      required: true,
+    },
+    interestLevel: {
+      type: Number,
+      required: true,
+    },
   },
-  email: {
+  { _id: false }
+); // This is important if you don't want Mongoose to automatically add an _id field to each GameInfo object
+
+const userSchema = new mongoose.Schema({
+  _id: String,
+  username: {
     type: String,
     required: true,
-    unique: true,
   },
   password: {
     type: String,
@@ -27,6 +41,10 @@ const userSchema = new mongoose.Schema({
       type: [Number],
       required: true,
     },
+  },
+  gameInterest: {
+    type: [gameInfoSchema], // This tells Mongoose that gameInterest is an array of GameInfo objects
+    required: false,
   },
 });
 
